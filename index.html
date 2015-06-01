@@ -14,7 +14,7 @@
         var i = currIndex - 1;
         var buildTweet = function(data) {
           var $el = $('<div/>'); 
-          $el.text('@' + data.user + ': ' + data.message);
+          $el.text('@' + data.user + ' - ' + data.created_at + ': ' + data.message);
           return $el;
         };
 
@@ -30,10 +30,12 @@
         $body.append($tweets);
 
         setInterval(function() {
-          if(streams.home.length > currIndex) {
+          if( streams.home.length > currIndex ) {
             var tweet = streams.home[streams.home.length-1];
             var $tweet = buildTweet(tweet);
+
             $tweets.prepend($tweet);
+
             currIndex = streams.home.length;
           }
         },100);
