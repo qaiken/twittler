@@ -1,51 +1,77 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="main.css">
   </head>
   <body>
+    <div class="container">
+    </div>
     <script src="jquery.js"></script>
     <script src="jquery.timeago.js"></script>
     <script src="data_generator.js"></script>
     <script>
 
       $(function() {
-        var $body = $('body');
-        var $tweets = $('<section />');
-        var currIndex = streams.home.length;
-        var i = currIndex - 1;
+        var currTimeline;
+        var $container = $('.container');
+        var $feed = $('<section class="feed" />');
+        var $timeline = $('<section class="timeline" />');
         var buildTweet = function(data) {
-          var $el = $('<div/>'); 
+          var $el = $('<div class="tweet" />'); 
 
-          $el.html('<p>@' + data.user + ' - ' + '<abbr class="timeago" title="' + data.created_at.toISOString() + '"></abbr>' + ': ' + data.message + '</p>');
+          $el.html('<p>@<span class="user">' + data.user + '</span> - ' + '<abbr class="timeago" title="' + data.created_at.toISOString() + '"></abbr>' + ': ' + data.message + '</p>');
 
           return $el;
         };
+        var initTweets = function($container,$feed,dataStream) {
+          var i = dataStream.length - 1;
 
-        $body.html('');
-
-        while(i >= 0) {
-          var tweet = streams.home[i];
-          var $tweet = buildTweet(tweet);
-          $tweets.append($tweet);
-          --i;
-        }
-
-        $body.append($tweets);
-
-        $tweets.find('abbr.timeago').timeago();
-
-        setInterval(function() {
-          if( streams.home.length > currIndex ) {
-            var tweet = streams.home[streams.home.length-1];
+          while(i >= 0) {
+            var tweet = dataStream[i];
             var $tweet = buildTweet(tweet);
 
-            $tweets.prepend($tweet);
+            $feed.append($tweet);
 
-            $tweet.find('abbr.timeago').timeago();
-
-            currIndex = streams.home.length;
+            --i;
           }
-        },100);
+
+          $container.append($feed);
+
+          $feed.find('abbr.timeago').timeago();
+        };
+        var upDateTweets = function($feed,dataStream) {
+          var currIndex = dataStream.length;
+
+          return setInterval(function() {
+            if( dataStream.length > currIndex ) {
+              var tweet = dataStream[dataStream.length-1];
+              var $tweet = buildTweet(tweet);
+
+              $feed.prepend($tweet);
+
+              $tweet.find('abbr.timeago').timeago();
+
+              currIndex = dataStream.length;
+            }
+          },100);
+        }
+
+        initTweets($container,$feed,streams.home);
+
+        upDateTweets($feed,streams.home);
+
+        $feed.on('click','.user',function() {
+
+          clearInterval(currTimeline);
+
+          $timeline.html('');
+
+          var dataStream = streams.users[this.textContent];
+
+          initTweets($container,$timeline,dataStream);
+
+          currTimeline = upDateTweets($timeline,dataStream);
+        });
 
       });
 
