@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="jquery.js"></script>
-    <script src="data_generator.js"></script>
   </head>
   <body>
+    <script src="jquery.js"></script>
+    <script src="jquery.timeago.js"></script>
+    <script src="data_generator.js"></script>
     <script>
 
       $(function() {
@@ -14,7 +15,9 @@
         var i = currIndex - 1;
         var buildTweet = function(data) {
           var $el = $('<div/>'); 
-          $el.text('@' + data.user + ' - ' + data.created_at + ': ' + data.message);
+
+          $el.html('<p>@' + data.user + ' - ' + '<abbr class="timeago" title="' + data.created_at.toISOString() + '"></abbr>' + ': ' + data.message + '</p>');
+
           return $el;
         };
 
@@ -29,12 +32,16 @@
 
         $body.append($tweets);
 
+        $tweets.find('abbr.timeago').timeago();
+
         setInterval(function() {
           if( streams.home.length > currIndex ) {
             var tweet = streams.home[streams.home.length-1];
             var $tweet = buildTweet(tweet);
 
             $tweets.prepend($tweet);
+
+            $tweet.find('abbr.timeago').timeago();
 
             currIndex = streams.home.length;
           }
