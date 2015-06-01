@@ -7,18 +7,36 @@
   <body>
     <script>
 
-      $(document).ready(function(){
+      $(function() {
         var $body = $('body');
+        var $tweets = $('<section />');
+        var currIndex = streams.home.length;
+        var i = currIndex - 1;
+        var buildTweet = function(data) {
+          var $el = $('<div/>'); 
+          $el.text('@' + data.user + ': ' + data.message);
+          return $el;
+        };
+
         $body.html('');
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+        while(i >= 0) {
+          var tweet = streams.home[i];
+          var $tweet = buildTweet(tweet);
+          $tweets.append($tweet);
+          --i;
         }
+
+        $body.append($tweets);
+
+        setInterval(function() {
+          if(streams.home.length > currIndex) {
+            var tweet = streams.home[streams.home.length-1];
+            var $tweet = buildTweet(tweet);
+            $tweets.prepend($tweet);
+            currIndex = streams.home.length;
+          }
+        },100);
 
       });
 
