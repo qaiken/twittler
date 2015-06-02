@@ -5,6 +5,16 @@
   </head>
   <body>
     <div class="container">
+      <div class="twittler">
+        <h1 class="headline">Twittler</h1>
+        <p class="advice">Click on a username to view their timeline.</p>
+        <section class="col-half twittler-group feed-container">
+          <h2 class="sub-headline">Feed:</h2>
+        </section>
+        <section class="col-half twittler-group timeline-container">
+          <h2 class="sub-headline">Timeline:</h2>
+        </section>
+      </div>
     </div>
     <script src="jquery.js"></script>
     <script src="jquery.timeago.js"></script>
@@ -13,13 +23,14 @@
 
       $(function() {
         var currTimeline;
-        var $container = $('.container');
-        var $feed = $('<section class="feed" />');
-        var $timeline = $('<section class="timeline" />');
+        var $feedContainer = $('section.feed-container');
+        var $feed = $('<article class="feed main-feed" />');
+        var $timelineContainer = $('section.timeline-container');
+        var $timeline = $('<article class="feed timeline" />');
         var buildTweet = function(data) {
           var $el = $('<div class="tweet" />'); 
 
-          $el.html('<p>@<span class="user">' + data.user + '</span> - ' + '<abbr class="timeago" title="' + data.created_at.toISOString() + '"></abbr>' + ': ' + data.message + '</p>');
+          $el.html('<p><span class="user">' + data.user + '</span> - ' + '<abbr class="timeago" title="' + data.created_at.toISOString() + '"></abbr></p>' + '<p>' + data.message + '</p>');
 
           return $el;
         };
@@ -43,24 +54,28 @@
           var currIndex = dataStream.length;
 
           return setInterval(function() {
-            if( dataStream.length > currIndex ) {
-              var tweet = dataStream[dataStream.length-1];
-              var $tweet = buildTweet(tweet);
-
-              $feed.prepend($tweet);
-
-              $tweet.find('abbr.timeago').timeago();
-
-              currIndex = dataStream.length;
+            if( dataStream.length <= currIndex ) {
+              return;
             }
+
+            var tweet = dataStream[dataStream.length-1];
+            var $tweet = buildTweet(tweet);
+
+            $feed.prepend($tweet);
+
+            $tweet.find('abbr.timeago').timeago();
+
+            currIndex = dataStream.length;
           },100);
         }
 
-        initTweets($container,$feed,streams.home);
+        initTweets($feedContainer,$feed,streams.home);
 
         upDateTweets($feed,streams.home);
 
         $feed.on('click','.user',function() {
+
+          $('.advice').addClass('fade-out');
 
           clearInterval(currTimeline);
 
@@ -68,7 +83,7 @@
 
           var dataStream = streams.users[this.textContent];
 
-          initTweets($container,$timeline,dataStream);
+          initTweets($timelineContainer,$timeline,dataStream);
 
           currTimeline = upDateTweets($timeline,dataStream);
         });
