@@ -68,6 +68,9 @@ body {
 
 .user {
   font-weight: bold;
+}
+
+.main-feed .user {
   cursor: pointer;
 }
 
