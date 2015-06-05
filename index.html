@@ -11,7 +11,7 @@
 
         <form action="" class="user-tweet">
           <fieldset class="user-group">
-            <label for="user">UserName:</label>
+            <label for="user">Username:</label>
             <input type="text" id="user">
           </fieldset>
 
@@ -20,7 +20,7 @@
             <input type="text" id="message">
           </fieldset>
 
-          <button type="submit">Tweet!</button>
+          <button type="submit">Tweet!</button><span class="validate"></span>
         </form>
 
         <p class="advice">Click on a username to view their timeline.</p>
@@ -48,6 +48,7 @@
         var $form = $('form.user-tweet');
         var $user = $('input#user');
         var $message = $('input#message');
+        var $validate = $('span.validate');
         var buildTweet = function(data) {
           var $el = $('<div class="tweet" />'); 
 
@@ -110,11 +111,32 @@
         });
 
         $form.on('submit',function(e) {
+          var message = $message.val();
+          var user = $user.val();
+
           e.preventDefault();
 
-          writeTweet($user.val(),$message.val());
+          if( message === '' || user === '' ) {
+
+            if( message === '' ) {
+              $validate.text('Please supply a message!');
+            }
+
+            if( user === '' ) {
+              $validate.text('Please supply a user name!');
+            }
+
+            $validate.fadeIn();
+            return;
+          }
+
+          writeTweet(user,message);
 
           $message.val('');
+          
+          $validate.fadeOut(400,function(){
+            $(this).text('');
+          });
         });
 
       });
