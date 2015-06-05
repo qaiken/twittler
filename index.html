@@ -6,9 +6,10 @@
   <body>
     <div class="container">
       <div class="twittler">
+        
         <h1 class="headline">Twittler</h1>
-        <p class="advice">Click on a username to view their timeline.</p>
-        <form action="">
+
+        <form action="" class="user-tweet">
           <fieldset class="user-group">
             <label for="user">UserName:</label>
             <input type="text" id="user">
@@ -21,9 +22,13 @@
 
           <button type="submit">Tweet!</button>
         </form>
+
+        <p class="advice">Click on a username to view their timeline.</p>
+
         <section class="col-half twittler-group feed-container">
           <h2 class="sub-headline">Feed:</h2>
         </section>
+
         <section class="col-half twittler-group timeline-container">
           <h2 class="sub-headline">Timeline:</h2>
         </section>
@@ -40,6 +45,9 @@
         var $feed = $('<article class="feed main-feed" />');
         var $timelineContainer = $('section.timeline-container');
         var $timeline = $('<article class="feed timeline" />');
+        var $form = $('form.user-tweet');
+        var $user = $('input#user');
+        var $message = $('input#message');
         var buildTweet = function(data) {
           var $el = $('<div class="tweet" />'); 
 
@@ -99,6 +107,14 @@
           initTweets($timelineContainer,$timeline,dataStream);
 
           currTimeline = upDateTweets($timeline,dataStream);
+        });
+
+        $form.on('submit',function(e) {
+          e.preventDefault();
+
+          writeTweet($user.val(),$message.val());
+
+          $message.val('');
         });
 
       });

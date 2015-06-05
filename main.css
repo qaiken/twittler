@@ -12,6 +12,10 @@ body {
   background: #B4C9D7;
 }
 
+h2 {
+  margin: 0 0 1em 0;
+}
+
 form {
   max-width: 85%;
   margin: 0 auto;
@@ -69,6 +73,7 @@ input {
 
 .advice {
   text-align: center;
+  margin: 1.5em 0;
 }
 
 .feed {
